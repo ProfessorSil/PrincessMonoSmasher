@@ -97,7 +97,7 @@ namespace PrincessMonoSmasher
         {
             sB.Draw(dot, rec, null, color, 0f, Vector2.Zero,  SpriteEffects.None, depth);
         }
-        public static void DrawRectangle(Rectangle rec, Color color, Color borderColor, float borderThickness = 0f, float depth = 0f)
+        public static void DrawRectangle(Rectangle rec, Color color, Color borderColor, float borderThickness = 1f, float depth = 0f)
         {
             sB.Draw(dot, rec, null, color, 0f, Vector2.Zero, SpriteEffects.None, depth);
             if (borderThickness != 0f)
@@ -112,7 +112,7 @@ namespace PrincessMonoSmasher
         {
             sB.Draw(dot, rec.Position, null, color, 0f, Vector2.Zero, rec.Size, SpriteEffects.None, depth);
         }
-        public static void DrawRectangle(fRectangle rec, Color color, Color borderColor, float borderThickness = 0f, float depth = 0f)
+        public static void DrawRectangle(fRectangle rec, Color color, Color borderColor, float borderThickness = 1f, float depth = 0f)
         {
             sB.Draw(dot,  rec.Position, null, color, 0f, Vector2.Zero, rec.Size, SpriteEffects.None, depth);
             if (borderThickness != 0f)
@@ -121,6 +121,21 @@ namespace PrincessMonoSmasher
                 DrawRectangle(new fRectangle(rec.X, rec.Y, borderThickness, rec.Height), borderColor, depth);
                 DrawRectangle(new fRectangle(rec.X, rec.Bottom - borderThickness, rec.Width, borderThickness), borderColor, depth);
                 DrawRectangle(new fRectangle(rec.Right - borderThickness, rec.Y, borderThickness, rec.Height), borderColor, depth);
+            }
+        }
+        public static void DrawOBB(OBB rec, Color color, float depth = 0f)
+        {
+            sB.Draw(dot, rec.Center, null, color, rec.Rotation, new Vector2(0.5f, 0.5f), rec.Size, SpriteEffects.None, depth);
+        }
+        public static void DrawOBB(OBB rec, Color color, Color borderColor, float borderThickness = 1f, float depth = 0f)
+        {
+            sB.Draw(dot, rec.Center, null, color, rec.Rotation, new Vector2(0.5f, 0.5f), rec.Size, SpriteEffects.None, depth);
+            if (borderThickness != 0f)
+            {
+                sB.Draw(dot, rec.TopLeft, null, borderColor, rec.Rotation, Vector2.Zero, new Vector2(rec.Width, borderThickness), SpriteEffects.None, depth);
+                sB.Draw(dot, rec.BottomLeft, null, borderColor, rec.Rotation - MathHelper.PiOver2, Vector2.Zero, new Vector2(rec.Height, borderThickness), SpriteEffects.None, depth);
+                sB.Draw(dot, rec.TopRight, null, borderColor, rec.Rotation + MathHelper.PiOver2, Vector2.Zero, new Vector2(rec.Height, borderThickness), SpriteEffects.None, depth);
+                sB.Draw(dot, rec.BottomRight, null, borderColor, rec.Rotation + MathHelper.Pi, Vector2.Zero, new Vector2(rec.Width, borderThickness), SpriteEffects.None, depth);
             }
         }
     }
@@ -235,14 +250,6 @@ namespace PrincessMonoSmasher
         {
             return new Circle(c.center - p, c.radius);
         }
-        public static bool operator ==(Circle c1, Circle c2)
-        {
-            return (c1.radius == c2.radius && c1.center == c2.center);
-        }
-        public static bool operator !=(Circle c1, Circle c2)
-        {
-            return (c1.radius != c2.radius || c1.center != c2.center);
-        }
     }
 
     /// <summary>
@@ -285,8 +292,87 @@ namespace PrincessMonoSmasher
         {
             get
             {
-                return new Vector2((float)Math.Cos(rotation) * size.X, (float)Math.Sin(rotation) * size.X);
+                return new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)) * size.X / 2f;
             }
+        }
+        /// <summary>
+        /// Returns a vector that goes from the center to the mid-point of the left side
+        /// </summary>
+        public Vector2 LeftVector
+        {
+            get
+            {
+                return new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)) * -size.X / 2f;
+            }
+        }
+        /// <summary>
+        /// Returns a vector that goes from the center to the mid-point of the bottom side
+        /// </summary>
+        public Vector2 BottomVector
+        {
+            get
+            {
+                return new Vector2((float)Math.Cos(rotation + MathHelper.PiOver2), (float)Math.Sin(rotation + MathHelper.PiOver2)) * size.Y / 2f;
+            }
+        }
+        /// <summary>
+        /// Returns a vector that goes from the center to the mid-point of the top side
+        /// </summary>
+        public Vector2 TopVector
+        {
+            get
+            {
+                return new Vector2((float)Math.Cos(rotation + MathHelper.PiOver2), (float)Math.Sin(rotation + MathHelper.PiOver2)) * -size.Y / 2f;
+            }
+        }
+        public Vector2 TopLeft
+        {
+            get { return LeftVector + TopVector + center; }
+        }
+        public Vector2 TopRight
+        {
+            get { return RightVector + TopVector + center; }
+        }
+        public Vector2 BottomLeft
+        {
+            get { return LeftVector + BottomVector + center; }
+        }
+        public Vector2 BottomRight
+        {
+            get { return RightVector + BottomVector + center; }
+        }
+
+        public OBB(float centerX, float centerY, float width, float height, float rotation)
+        {
+            this.center = new Vector2(centerX, centerY);
+            this.size = new Vector2(width, height);
+            this.rotation = rotation;
+        }
+        public OBB(Vector2 center, float width, float height, float rotation)
+        {
+            this.center = center;
+            this.size = new Vector2(width, height);
+            this.rotation = rotation;
+        }
+        public OBB(Vector2 topLeft, Vector2 bottomRight, float rotation)
+        {
+            this.center = (topLeft + bottomRight) / 2f;
+            this.rotation = rotation;
+            Vector2 p1, p2;
+            p1 = new Vector2((float)Math.Cos(-rotation), (float)Math.Sin(-rotation)) * (topLeft.X - center.X) +
+                new Vector2((float)Math.Cos(-rotation + MathHelper.PiOver2), (float)Math.Sin(-rotation + MathHelper.PiOver2)) * (topLeft.Y - center.Y);
+            p2 = new Vector2((float)Math.Cos(-rotation), (float)Math.Sin(-rotation)) * (bottomRight.X - center.X) +
+                new Vector2((float)Math.Cos(-rotation + MathHelper.PiOver2), (float)Math.Sin(-rotation + MathHelper.PiOver2)) * (bottomRight.Y - center.Y);
+            this.size = new Vector2(p2.X - p1.X, p2.Y - p1.Y);
+        }
+
+        public static OBB operator +(OBB rec, Vector2 p)
+        {
+            return new OBB(rec.Center + p, rec.Size.X, rec.Size.Y, rec.rotation);
+        }
+        public static OBB operator -(OBB rec, Vector2 p)
+        {
+            return new OBB(rec.Center - p, rec.Size.X, rec.Size.Y, rec.rotation);
         }
     }
 
@@ -456,14 +542,6 @@ namespace PrincessMonoSmasher
         public static fRectangle operator -(fRectangle rec, Vector2 p)
         {
             return new fRectangle(rec.Position - p, rec.Size);
-        }
-        public static bool operator ==(fRectangle r1, fRectangle r2)
-        {
-            return (r1.Position == r2.Position && r1.Size == r2.Size);
-        }
-        public static bool operator !=(fRectangle r1, fRectangle r2)
-        {
-            return (r1.Position != r2.Position || r1.Size != r2.Size);
         }
     }
 }
