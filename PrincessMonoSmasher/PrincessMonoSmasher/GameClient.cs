@@ -11,8 +11,13 @@ namespace PrincessMonoSmasher
 {
     class GameClient
     {
+        public const float GRID_SIZE = 16;
+
         public static View view;
         public static string currentRoomName;
+
+        public static Tile[,] grid;
+        public static List<Entity> entities;
 
         public static void LoadContent()
         {
@@ -30,6 +35,20 @@ namespace PrincessMonoSmasher
         {
             currentRoomName = room;
             //TODO: Add room loading
+        }
+
+        /// <summary>
+        /// This does not account for if there are two entities in one spot (which shouldn't happen when it's important)
+        /// </summary>
+        public static Entity GetEntityAt(int x, int y)
+        {
+            for (int i = 0; i < entities.Count; i++)
+            {
+                if (entities[i].Position == new Point(x, y))
+                    return entities[i];
+            }
+
+            return null;
         }
 
         public static void Update()
@@ -64,6 +83,7 @@ namespace PrincessMonoSmasher
 
         public static void Draw()
         {
+            //                       This makes the pixelated graphics stay pixelated---V
             view.BeginDraw(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
 
 
