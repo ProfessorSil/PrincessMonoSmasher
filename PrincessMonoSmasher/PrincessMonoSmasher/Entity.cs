@@ -11,12 +11,18 @@ namespace PrincessMonoSmasher
 {
     class Entity
     {
-        public static float moveSpeed = 1 / 16f;
+        public static float moveSpeed = 1 / 8f;
+        //This should be getting handled by GameClient.LoadContent()
+        public static Texture2D sheet;
 
         public bool isSolid, isStatic;
         private Point position, positionLast;
         public Point texture;
         public float movePercent;
+        /// <summary>
+        /// This is strictly for getting itself removed from the entities list in GameClient
+        /// </summary>
+        public bool alive;
 
         public Point Position
         {
@@ -64,6 +70,7 @@ namespace PrincessMonoSmasher
             this.isStatic = isStatic;
             this.isSolid = isSolid;
             this.movePercent = 1f;
+            this.alive = true;
         }
 
         /// <summary>
@@ -133,6 +140,16 @@ namespace PrincessMonoSmasher
             //Box and player will make the most use of this function
             //as well as anything that needs to be checked everytime an entity 
             //stops at a position
+        }
+
+        public virtual void Draw()
+        {
+            if (GameSettings.DebugDrawOn)
+            {
+                Gl.DrawRectangle(new fRectangle(DrawPosition.X, DrawPosition.Y, GameClient.GRID_SIZE, GameClient.GRID_SIZE), Color.Green * 0.8f, Color.Black, 1f);
+            }
+
+            Gl.sB.Draw(sheet, DrawPosition, new Rectangle(texture.X * 16, texture.Y * 16, 16, 16), Color.White);
         }
     }
 }

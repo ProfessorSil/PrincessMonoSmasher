@@ -35,12 +35,15 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="BoxEntity.cs" />
     <Compile Include="Entity.cs" />
+    <Compile Include="GameSettings.cs" />
     <Compile Include="IntroClient.cs" />
     <Compile Include="MenuClient.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameClient.cs" />
     <Compile Include="Gl.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tile.cs" />
@@ -194,6 +197,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\buttonStart.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\playerSheet.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

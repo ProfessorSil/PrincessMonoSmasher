@@ -89,3 +89,4 @@ C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\Princess
 C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\buttonExit.xnb
 C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\buttonSettings.xnb
 C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\buttonStart.xnb
+C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\playerSheet.xnb

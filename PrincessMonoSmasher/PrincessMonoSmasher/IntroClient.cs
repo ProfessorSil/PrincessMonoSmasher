@@ -40,8 +40,8 @@ namespace PrincessMonoSmasher
         {
             time++;
 
-            if (Gl.KeyPress(Keys.Space) || Gl.KeyPress(Keys.Enter) || Gl.KeyPress(Keys.Escape))
-                time = 241;
+            if (Gl.KeyPress(Keys.Space) || Gl.KeyPress(Keys.Enter) || Gl.KeyPress(Keys.Escape) || Gl.MousePress(true))
+                time = 331;
             if (time > 330)
             {
                 MediaPlayer.Stop();

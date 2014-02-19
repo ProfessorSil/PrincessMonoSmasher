@@ -55,6 +55,7 @@ namespace PrincessMonoSmasher
             {
                 if (hoveringCurrent == 0)
                 {
+                    MediaPlayer.Stop();
                     Gl.game.GotoClient(Clients.Game, "Room1");
                 }
                 else if (hoveringCurrent == 1)
