@@ -32,10 +32,11 @@ namespace PrincessMonoSmasher
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            graphics.PreferredBackBufferWidth = 400;
+            graphics.PreferredBackBufferWidth = 600;
             graphics.PreferredBackBufferHeight = 400;
             graphics.ApplyChanges();
             this.IsMouseVisible = true;
+            this.Window.Title = "Princess Dungeon Smasher";
         }
 
         protected override void Initialize()
