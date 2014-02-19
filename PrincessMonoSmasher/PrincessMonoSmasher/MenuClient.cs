@@ -38,11 +38,12 @@ namespace PrincessMonoSmasher
             buttonRecs[1] = reference + new Vector2(100, -50);
             buttonRecs[2] = reference + new Vector2(-100, 50);
             buttonRecs[3] = reference + new Vector2(100, 50);
+
+            hoveringCurrent = 0;
         }
 
         public static void Update()
         {
-            hoveringCurrent = -1;
             for (int i = 0; i < buttonRecs.Length; i++)
             {
                 if (buttonRecs[i].Contains(Gl.MousePos))
@@ -51,7 +52,7 @@ namespace PrincessMonoSmasher
                 }
             }
 
-            if (Gl.MousePress(true) && hoveringCurrent != -1)
+            if (Gl.MousePress(true) || Gl.KeyPress(Keys.Enter))
             {
                 if (hoveringCurrent == 0)
                 {
