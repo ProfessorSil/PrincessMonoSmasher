@@ -80,8 +80,8 @@ C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\Princess
 C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\uncheckBox.xnb
 C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\wall.xnb
 C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\Music\ElScorchoSong.xnb
-C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\Music\InTheGarage.xnb
-C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\Music\NyanCatLoop.xnb
-C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\Music\WeAreAllOnDrugs.xnb
-C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\Music\ElScorchoIntro.wma
-C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\Music\ElScorchoIntrox.xnb
+C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\Music\07InTheGarage.wav
+C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\Music\ElScorchoIntro.wav
+C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\Music\ElScorchoSong.wav
+C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\Music\07InTheGarage.xnb
+C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\Music\ElScorchoIntro.xnb

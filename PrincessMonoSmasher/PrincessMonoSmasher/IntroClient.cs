@@ -21,13 +21,13 @@ namespace PrincessMonoSmasher
         {
             logoTexture = Gl.Load("pendeproLogo");
             font = Gl.Content.Load<SpriteFont>("Font1");
-            //introSong = Gl.Content.Load<Song>("ElScorchoIntrox"); <--Doesn't work at the moment!! UGH
+            introSong = Gl.Content.Load<Song>("Music/ElScorchoIntro.wav");
         }
 
         public static void Initialize()
         {
-            //MediaPlayer.IsRepeating = false;
-            //MediaPlayer.Play(introSong);
+            MediaPlayer.IsRepeating = false;
+            MediaPlayer.Play(introSong);
         }
 
         public static void Update()
@@ -36,11 +36,13 @@ namespace PrincessMonoSmasher
 
             if (Gl.KeyPress(Keys.Space) || Gl.KeyPress(Keys.Enter) || Gl.KeyPress(Keys.Escape))
                 time = 241;
-            
-            if (time > 240 && !Gl.game.isLoading)
+            if (time > 330)
             {
-                //MediaPlayer.Stop();
-                Gl.game.GotoClient(Clients.Menu);
+                MediaPlayer.Stop();
+                if (!Gl.game.isLoading)
+                {
+                    Gl.game.GotoClient(Clients.Menu);
+                }
             }
         }
 
@@ -54,15 +56,16 @@ namespace PrincessMonoSmasher
                 Gl.sB.DrawString(font, "Loading...", Vector2.Zero, Color.White);
             }
 
+            #region Logo
             float alpha = 1;
-            if (time >= 30 && time < 60)
-                alpha = (time - 30) / 30f;
-            else if (time >= 210)
-                alpha = 1 - (time - 210) / 30f;
-            else if (time >= 240 || time < 30)
+            if (time >= 30 && time < 125)
+                alpha = (time - 30) / 95f;
+            else if (time >= 170)
                 alpha = 0;
             Gl.sB.Draw(logoTexture, new Vector2(Gl.graphics.Viewport.Width / 2f, Gl.graphics.Viewport.Height / 2f), null, Color.White * alpha, 0f,
                 new Vector2(logoTexture.Width / 2f, logoTexture.Height / 2f), 1f, SpriteEffects.None, 0f);
+            #endregion
+
             Gl.sB.End();
         }
     }
