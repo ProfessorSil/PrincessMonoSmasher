@@ -30,6 +30,8 @@ namespace PrincessMonoSmasher
 
         public static void Draw()
         {
+            Gl.graphics.Clear(Color.LightBlue);
+
 
         }
     }

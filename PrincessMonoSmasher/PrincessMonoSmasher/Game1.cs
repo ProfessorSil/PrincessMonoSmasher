@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.GamerServices;
+using System.Threading;
 #endregion
 
 namespace PrincessMonoSmasher
@@ -23,6 +24,8 @@ namespace PrincessMonoSmasher
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Clients current;
+        public bool isLoading = true;
+        Thread loadThread;
 
         public Game1()
             : base()
@@ -42,11 +45,12 @@ namespace PrincessMonoSmasher
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Gl.Initialize(this, spriteBatch, Content, GraphicsDevice);
             //TODO: add background loading while intro client is still in progress
-            GameClient.LoadContent();
-            MenuClient.LoadContent();
             IntroClient.LoadContent();
+            GotoClient(Clients.Intro);
 
-            GotoClient(Clients.Game);
+            loadThread = new Thread(new ThreadStart(ThreadedLoadContent));
+            isLoading = true;
+            loadThread.Start();
         }
 
         public void GotoClient(Clients client, string roomName = "defualt")
@@ -63,8 +67,22 @@ namespace PrincessMonoSmasher
             }
         }
 
+        private void ThreadedLoadContent()
+        {
+            //isLoading = true;
+
+            GameClient.LoadContent();
+            MenuClient.LoadContent();
+
+            //isLoading = false;
+        }
+
         protected override void UnloadContent()
         {
+            if (loadThread.ThreadState == ThreadState.Running)
+            {
+                loadThread.Abort();
+            }
         }
 
         protected override void Update(GameTime gameTime)
@@ -80,12 +98,18 @@ namespace PrincessMonoSmasher
             else if (current == Clients.Menu)
                 MenuClient.Update();
 
+            if (loadThread.ThreadState == ThreadState.Stopped)
+            {
+                loadThread.Abort();
+                isLoading = false;
+            }
+
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             //spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone);
 
