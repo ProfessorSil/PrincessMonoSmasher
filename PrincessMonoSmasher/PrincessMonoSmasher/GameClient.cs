@@ -59,35 +59,290 @@ namespace PrincessMonoSmasher
         public static void LoadRoom(string room)
         {
             currentRoomName = room;
-            //TODO: Add room loading
 
-            //Placeholder:
+            LevelFile file = FileHandling.LoadLevel(room);
+            grid = new Tile[file.Width, file.Height];
+            width = file.Width;
+            height = file.Height;
+            for (int x = 0; x < file.Width; x++)
             {
-                width = 20;
-                height = 20;
-                view.LeftMax = 0;
-                view.TopMax = 0;
-                view.BottomMax = height * GRID_SIZE;
-                view.RightMax = width * GRID_SIZE;
-                grid = new Tile[width, height];
-                for (int x = 0; x < width; x++)
+                for (int y = 0; y < file.Height; y++)
                 {
-                    for (int y = 0; y < height; y++)
-                    {
-                        if (x == 0 || y == 0 || x == width - 1 || y == height - 1)
-                            grid[x, y] = new Tile(new Point(1, 0));
-                        else
-                            grid[x, y] = new Tile(new Point(0, 0));
-                    }
+                    grid[x, y] = new Tile(file.grid[x, y]);
                 }
-                grid[8, 1] = new Tile(new Point(3, 0));
-                grid[9, 1] = new Tile(new Point(2, 0));
-                grid[10, 1] = new Tile(new Point(4, 0));
-                grid[11, 1] = new Tile(new Point(5, 0));
-                entities = new List<Entity>();
-                entities.Add(new Player(new Point(1, 1)));
-                entities.Add(new BoxEntity(new Point(8, 2)));
             }
+            entities = new List<Entity>();
+            for (int i = 0; i < file.entities.Count; i++)
+            {
+                #region Entities
+                //TODO: THIS IS JUST A FRAMEWORK, ONLY REGULAR BOXES WORK AT THE MOMENT!!!
+
+                //start (I): Start position of player
+                //box: Regular Box
+                //teleport: Teleporter
+                //exit: Exit
+                //button (U): Button
+                //switch: Switch Block
+                //key: Key
+                //door: Door
+                //pad: Pressure Pad (For light up box)
+                string type = file.entities[i][0].ToLower();
+                Point pos = FileHandling.ParsePoint(file.entities[i][1]);
+                if (type == "b" || type == "box")
+                {
+                    #region Boxes
+                    if (file.entities[i].Length >= 3)
+                    {
+                        string boxType = file.entities[i][2].ToLower();
+                        if (boxType == "n" || boxType == "normal" || boxType == "0")
+                        {
+                            entities.Add(new BoxEntity(pos));
+                        }
+                        else if (boxType == "l" || boxType == "light" || boxType == "1")
+                        {
+                            //CREATE LIGHT BOX
+                        }
+                        else
+                        {
+                            entities.Add(new BoxEntity(pos));
+                        }
+                    }
+                    else
+                    {
+                        entities.Add(new BoxEntity(pos));
+                    }
+                    #endregion
+                }
+                else if (type == "t" || type == "teleporter")
+                {
+                    #region Teleporters
+                    if (file.entities[i].Length >= 2)
+                    {
+                        string teleType = file.entities[i][3].ToLower();
+                        if (teleType == "red" || teleType == "0")
+                        {
+                            //CREATE RED TELEPORT
+                        }
+                        else if (teleType == "green" || teleType == "1")
+                        {
+                            //CREATE GREEN TELEPORT
+                        }
+                        else if (teleType == "blue" || teleType == "2")
+                        {
+                            //CREATE BLUE TELEPORT
+                        }
+                        else
+                        {
+                            //ADD DEFAULT TELEPORT
+                        }
+                    }
+                    else
+                    {
+                        //ADD DEFAULT TELEPORT
+                    }
+                    #endregion
+                }
+                else if (type == "e" || type == "exit")
+                {
+                    #region Exit
+                    //ADD EXIT
+                    #endregion
+                }
+                else if (type == "u" || type == "button")
+                {
+                    #region Buttons
+                    if (file.entities[i].Length >= 3)
+                    {
+                        string buttonType = file.entities[i][2].ToLower();
+                        //gray, yellow, orange, blue, green, purple
+                        if (buttonType == "gray" || buttonType == "0")
+                        {
+                            //CREATE GRAY BUTTON
+                        }
+                        else if (buttonType == "yellow" || buttonType == "1")
+                        {
+                            //CREATE YELLOW BUTTON
+                        }
+                        else if (buttonType == "orange" || buttonType == "2")
+                        {
+                            //CREATE ORANGE BUTTON
+                        }
+                        else if (buttonType == "blue" || buttonType == "3")
+                        {
+                            //CREATE BLUE BUTTON
+                        }
+                        else if (buttonType == "green" || buttonType == "4")
+                        {
+                            //CREATE GREEN BUTTON
+                        }
+                        else if (buttonType == "purple" || buttonType == "5")
+                        {
+                            //CREATE PURPLE BUTTON
+                        }
+                        else
+                        {
+                            //ADD DEFAULT BUTTON
+                        }
+                    }
+                    else
+                    {
+                        //ADD DEFAULT BUTTON
+                    }
+                    #endregion
+                }
+                else if (type == "s" || type == "switch")
+                {
+                    #region Switch Blocks
+                    if (file.entities[i].Length >= 3)
+                    {
+                        string switchType = file.entities[i][2].ToLower();
+                        //yellow, orange, blue, green, purple
+                        //There is no 'gray' switch blocks only 'gray' buttons
+                        if (switchType == "yellow" || switchType == "0")
+                        {
+                            //CREATE YELLOW SWITCH
+                        }
+                        else if (switchType == "orange" || switchType == "1")
+                        {
+                            //CREATE ORANGE SWITCH
+                        }
+                        else if (switchType == "blue" || switchType == "2")
+                        {
+                            //CREATE BLUE SWITCH
+                        }
+                        else if (switchType == "green" || switchType == "3")
+                        {
+                            //CREATE GREEN SWITCH
+                        }
+                        else if (switchType == "purple" || switchType == "4")
+                        {
+                            //CREATE PURPLE SWITCH
+                        }
+                        else
+                        {
+                            //ADD DEFAULT SWITCH
+                        }
+                    }
+                    else
+                    {
+                        //ADD DEFAULT SWITCH
+                    }
+                    #endregion
+                }
+                else if (type == "k" || type == "key")
+                {
+                    #region Keys
+                    if (file.entities[i].Length >= 3)
+                    {
+                        string keyType = file.entities[i][2].ToLower();
+                        if (keyType == "gray" || keyType == "0")
+                        {
+                            //CREATE GRAY KEY
+                        }
+                        else if (keyType == "blue" || keyType == "1")
+                        {
+                            //CREATE BLUE KEY
+                        }
+                        else if (keyType == "green" || keyType == "2")
+                        {
+                            //CREATE GREEN KEY
+                        }
+                        else if (keyType == "brown" || keyType == "3")
+                        {
+                            //CREATE BROWN KEY
+                        }
+                        else
+                        {
+                            //ADD DEFAULT KEY
+                        }
+                    }
+                    else
+                    {
+                        //ADD DEFAULT KEY
+                    }
+                    #endregion
+                }
+                else if (type == "d" || type == "door")
+                {
+                    #region Doors
+                    if (file.entities[i].Length >= 3)
+                    {
+                        string doorType = file.entities[i][2].ToLower();
+                        if (doorType == "gray" || doorType == "0")
+                        {
+                            //CREATE GRAY DOOR
+                        }
+                        else if (doorType == "blue" || doorType == "1")
+                        {
+                            //CREATE BLUE DOOR
+                        }
+                        else if (doorType == "green" || doorType == "2")
+                        {
+                            //CREATE GREEN DOOR
+                        }
+                        else if (doorType == "brown" || doorType == "3")
+                        {
+                            //CREATE BROWN DOOR
+                        }
+                        else if (doorType == "pressure" || doorType == "4")
+                        {
+                            //CREATE PRESSURE DOOR
+                        }
+                        else
+                        {
+                            //ADD DEFAULT DOOR
+                        }
+                    }
+                    else
+                    {
+                        //ADD DEFAULT DOOR
+                    }
+                    #endregion
+                }
+                else if (type == "p" || type == "pad")
+                {
+                    #region Exit
+                    //ADD PRESSURE PAD
+                    #endregion
+                }
+                else if (type == "i" || type == "start")
+                {
+                    entities.Insert(0, new Player(pos));
+                }
+                else
+                {
+                    //Didn't recognize the entity type but would still like to see it
+                    //loaded and shown when debugDraw is on
+                    entities.Add(new Entity(new Point(0, 3), pos, true, false));
+                }
+                #endregion
+            }
+
+            if (!(entities[0] is Player))
+            {
+                entities.Insert(0, new Player(new Point(1, 1)));
+            }
+        }
+
+        public static void CreateEmptyRoom(int width, int height)
+        {
+            view.LeftMax = 0;
+            view.TopMax = 0;
+            view.BottomMax = height * GRID_SIZE;
+            view.RightMax = width * GRID_SIZE;
+            grid = new Tile[width, height];
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (x == 0 || y == 0 || x == width - 1 || y == height - 1)
+                        grid[x, y] = new Tile(new Point(1, 0));
+                    else
+                        grid[x, y] = new Tile(new Point(0, 0));
+                }
+            }
+            entities = new List<Entity>();
+            entities.Add(new Player(new Point(1, 1)));
         }
 
         /// <summary>

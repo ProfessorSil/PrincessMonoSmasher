@@ -37,8 +37,10 @@
   <ItemGroup>
     <Compile Include="BoxEntity.cs" />
     <Compile Include="Entity.cs" />
+    <Compile Include="FileHandling.cs" />
     <Compile Include="GameSettings.cs" />
     <Compile Include="IntroClient.cs" />
+    <Compile Include="LevelFile.cs" />
     <Compile Include="MenuClient.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameClient.cs" />
@@ -66,6 +68,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Levels\Level1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Music\07InTheGarage.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
