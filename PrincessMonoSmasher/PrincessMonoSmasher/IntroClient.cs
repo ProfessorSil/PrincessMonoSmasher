@@ -32,8 +32,12 @@ namespace PrincessMonoSmasher
 
         public static void Initialize()
         {
-            MediaPlayer.IsRepeating = false;
-            MediaPlayer.Play(introSong);
+            if (GameSettings.MusicOn)
+            {
+                MediaPlayer.IsRepeating = false;
+                MediaPlayer.Volume = GameSettings.MusicVolume;
+                MediaPlayer.Play(introSong);
+            }
         }
 
         public static void Update()

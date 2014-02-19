@@ -74,19 +74,23 @@ namespace PrincessMonoSmasher
             Tile t = GameClient.grid[Position.X, Position.Y];
             if (t.type == new Point(0, 1)) //Pusher Right
             {
-                TryMove(1, 0, 10);
+                if (TryMove(1, 0, 10))
+                    GameClient.PlaySoundEffectAt(DrawPosition + new Vector2(8, 8), GameClient.sndPusher);
             }
             else if (t.type == new Point(1, 1)) //Pusher Down
             {
-                TryMove(0, 1, 10);
+                if (TryMove(0, 1, 10))
+                    GameClient.PlaySoundEffectAt(DrawPosition + new Vector2(8, 8), GameClient.sndPusher);
             }
             else if (t.type == new Point(2, 1)) //Pusher Left
             {
-                TryMove(-1, 0, 10);
+                if (TryMove(-1, 0, 10))
+                    GameClient.PlaySoundEffectAt(DrawPosition + new Vector2(8, 8), GameClient.sndPusher);
             }
             else if (t.type == new Point(3, 1)) //Pusher Up
             {
-                TryMove(0, -1, 10);
+                if (TryMove(0, -1, 10))
+                    GameClient.PlaySoundEffectAt(DrawPosition + new Vector2(8, 8), GameClient.sndPusher);
             }
             else if (t.type == new Point(2, 0)) //Hole
             {
@@ -99,6 +103,7 @@ namespace PrincessMonoSmasher
             else if (t.type == new Point(5, 0)) //Water
             {
                 GameClient.grid[Position.X, Position.Y] = new Tile(new Point(6, 0));
+                GameClient.PlaySoundEffectAt(DrawPosition + new Vector2(8, 8), GameClient.sndBlockWater);
                 alive = false;
             }
             else if (t.type == new Point(3, 0)) //Ice
@@ -114,6 +119,10 @@ namespace PrincessMonoSmasher
             typeOfDeath = type;
             isStatic = true;
             isSolid = false;
+            if (type == DeathType.Burn)
+                GameClient.PlaySoundEffectAt(DrawPosition + new Vector2(8, 8), GameClient.sndBurn);
+            if (type == DeathType.Fall)
+                GameClient.PlaySoundEffectAt(DrawPosition + new Vector2(8, 8), GameClient.sndFall);
         }
 
         public override void Draw()

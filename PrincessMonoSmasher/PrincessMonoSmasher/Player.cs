@@ -117,19 +117,23 @@ namespace PrincessMonoSmasher
             Tile t = GameClient.grid[Position.X, Position.Y];
             if (t.type == new Point(0, 1)) //Pusher Right
             {
-                TryMove(1, 0, 10);
+                if (TryMove(1, 0, 10))
+                    GameClient.PlaySoundEffect(GameClient.sndPusher);
             }
             else if (t.type == new Point(1, 1)) //Pusher Down
             {
-                TryMove(0, 1, 10);
+                if (TryMove(0, 1, 10))
+                    GameClient.PlaySoundEffect(GameClient.sndPusher);
             }
             else if (t.type == new Point(2, 1)) //Pusher Left
             {
-                TryMove(-1, 0, 10);
+                if (TryMove(-1, 0, 10))
+                    GameClient.PlaySoundEffect(GameClient.sndPusher);
             }
             else if (t.type == new Point(3, 1)) //Pusher Up
             {
-                TryMove(0, -1, 10);
+                if (TryMove(0, -1, 10))
+                    GameClient.PlaySoundEffect(GameClient.sndPusher);
             }
             else if (t.type == new Point(2, 0)) //Hole
             {
@@ -155,6 +159,12 @@ namespace PrincessMonoSmasher
             deathTimer = 0;
             typeOfDeath = type;
             isStatic = true;
+            if (type == DeathType.Burn)
+                GameClient.PlaySoundEffect(GameClient.sndBurn);
+            else if (type == DeathType.Drown)
+                GameClient.PlaySoundEffect(GameClient.sndDrown);
+            else if (type == DeathType.Fall)
+                GameClient.PlaySoundEffect(GameClient.sndFall);
         }
 
         public override void Draw()

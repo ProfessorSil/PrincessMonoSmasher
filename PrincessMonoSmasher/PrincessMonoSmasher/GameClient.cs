@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
 
 namespace PrincessMonoSmasher
 {
@@ -15,6 +16,7 @@ namespace PrincessMonoSmasher
         public const float GRID_SIZE = 16;
         public static Texture2D tileSheet;
         public static Song gameSong;
+        public static SoundEffect sndDrown, sndBlockWater, sndBurn, sndBlockBurn, sndPusher, sndFall, sndPickup;
 
         public static View view;
         public static string currentRoomName;
@@ -45,13 +47,27 @@ namespace PrincessMonoSmasher
             Player.SpriteSheet = Gl.Load("playerSheet");
             Entity.sheet = Gl.Load("entitiesSheet");
             tileSheet = Gl.Load("tileSheet");
-            //gameSong = Gl.Content.Load<Song>("Music/WeAreAllOnDrugs.wav");
+            gameSong = Gl.Content.Load<Song>("Music/WeAreAllOnDrugs.wav");
+            sndBlockBurn = Gl.Content.Load<SoundEffect>("SoundEffects/blockBurn");
+            sndBurn = Gl.Content.Load<SoundEffect>("SoundEffects/burn");
+            sndPusher = Gl.Content.Load<SoundEffect>("SoundEffects/push");
+            sndPickup = Gl.Content.Load<SoundEffect>("SoundEffects/pickup");
+            sndBlockWater = Gl.Content.Load<SoundEffect>("SoundEffects/blockWater");
+            sndDrown = Gl.Content.Load<SoundEffect>("SoundEffects/splash");
+            sndFall = Gl.Content.Load<SoundEffect>("SoundEffects/fall");
         }
 
         public static void Initialize(string roomName)
         {
             view = new View(Vector2.Zero, 2f, 0f, 10f);
-            
+            if (MediaPlayer.State == MediaState.Playing)
+                MediaPlayer.Stop();
+            if (GameSettings.MusicOn)
+            {
+                MediaPlayer.IsRepeating = true;
+                MediaPlayer.Volume = GameSettings.MusicVolume;
+                MediaPlayer.Play(gameSong);
+            }
 
             LoadRoom(roomName);
         }
@@ -434,6 +450,38 @@ namespace PrincessMonoSmasher
             }
 
             Gl.sB.End();
+        }
+
+        public static void PlaySoundEffect(SoundEffect snd)
+        {
+            if (GameSettings.SoundEffectsOn)
+            {
+                snd.Play(GameSettings.SoundEffectsVolume, 0, 0);
+            }
+        }
+        /// <summary>
+        /// Calculates how loud a sound should be played, depends on the view position at the time
+        /// Sound effect volume is a little buggy!
+        /// </summary>
+        public static void PlaySoundEffectAt(Vector2 position, SoundEffect snd)
+        {
+            if (GameSettings.SoundEffectsOn)
+            {
+                float distance = Vector2.Distance(position, GameClient.view.position) - 100;
+                float maxDistance = (float)Math.Sqrt(Math.Pow(GameClient.view.ViewSize.X, 2) + Math.Pow(GameClient.view.ViewSize.Y, 2)) - 100;
+                float volume = GameSettings.SoundEffectsVolume * (1 - distance / maxDistance);
+                if (distance <= 0)
+                    volume = GameSettings.SoundEffectsVolume;
+                float pan = (position.X - view.position.X) / (view.ViewSize.X / 2f);
+                if (pan > 1)
+                    pan = 1;
+                else if (pan < -1)
+                    pan = -1;
+                if (volume > 0)
+                {
+                    snd.Play(volume, 0, pan);
+                }
+            }
         }
     }
 }

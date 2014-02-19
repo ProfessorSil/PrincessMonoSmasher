@@ -11,7 +11,7 @@ namespace PrincessMonoSmasher
 {
     class Entity
     {
-        public static float moveSpeed = 1 / 8f;
+        public static float moveSpeed = 1 / 10f;
         //This should be getting handled by GameClient.LoadContent()
         public static Texture2D sheet;
 

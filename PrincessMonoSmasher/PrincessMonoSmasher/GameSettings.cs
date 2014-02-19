@@ -11,7 +11,8 @@ namespace PrincessMonoSmasher
         public static bool MusicOn = true;
         public static bool SoundEffectsOn = true;
         public static bool DebugDrawOn = true;//Barely used in Entity.Draw()
-        public static float SoundVolume = 1;
+        public static float SoundEffectsVolume = 0.5f;
+        public static float MusicVolume = 0.1f;
 
     }
 }

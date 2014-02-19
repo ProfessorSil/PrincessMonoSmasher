@@ -7,12 +7,14 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
 
 namespace PrincessMonoSmasher
 {
     class MenuClient
     {
         static Song MenuSong;
+        static SoundEffect selectSound, moveSound;
         static Texture2D banner, btStart, btSettings, btEditor, btExit;
         static fRectangle[] buttonRecs;
         static int hoveringCurrent = -1;
@@ -25,12 +27,18 @@ namespace PrincessMonoSmasher
             btSettings= Gl.Load("buttonSettings");
             btEditor = Gl.Load("buttonEditor");
             btExit = Gl.Load("buttonExit");
+            selectSound = Gl.Content.Load<SoundEffect>("SoundEffects/menuSelect");
+            moveSound = Gl.Content.Load<SoundEffect>("SoundEffects/menuMove");
         }
 
         public static void Initialize()
         {
-            MediaPlayer.IsRepeating = true;
-            MediaPlayer.Play(MenuSong);
+            if (GameSettings.MusicOn)
+            {
+                MediaPlayer.IsRepeating = true;
+                MediaPlayer.Volume = GameSettings.MusicVolume;
+                MediaPlayer.Play(MenuSong);
+            }
 
             buttonRecs = new fRectangle[4];
             fRectangle reference = new fRectangle(Gl.graphics.Viewport.Width / 2f, Gl.graphics.Viewport.Height / 3f * 2f, btStart.Width * 4, btStart.Height * 2);
@@ -51,9 +59,43 @@ namespace PrincessMonoSmasher
                     hoveringCurrent = i;
                 }
             }
+            if (Gl.KeyPress(Keys.Right))
+            {
+                hoveringCurrent++;
+                if (hoveringCurrent > 3)
+                    hoveringCurrent = 0;
+                if (GameSettings.SoundEffectsOn)
+                    moveSound.Play(GameSettings.SoundEffectsVolume, 0, 0);
+            }
+            if (Gl.KeyPress(Keys.Left))
+            {
+                hoveringCurrent--;
+                if (hoveringCurrent < 0)
+                    hoveringCurrent = 3;
+                if (GameSettings.SoundEffectsOn)
+                    moveSound.Play(GameSettings.SoundEffectsVolume, 0, 0);
+            }
+            if (Gl.KeyPress(Keys.Down))
+            {
+                hoveringCurrent += 2;
+                if (hoveringCurrent > 3)
+                    hoveringCurrent -= 4;
+                if (GameSettings.SoundEffectsOn)
+                    moveSound.Play(GameSettings.SoundEffectsVolume, 0, 0);
+            }
+            if (Gl.KeyPress(Keys.Up))
+            {
+                hoveringCurrent -= 2;
+                if (hoveringCurrent < 0)
+                    hoveringCurrent += 4;
+                if (GameSettings.SoundEffectsOn)
+                    moveSound.Play(GameSettings.SoundEffectsVolume, 0, 0);
+            }
 
             if (Gl.MousePress(true) || Gl.KeyPress(Keys.Enter))
             {
+                if (GameSettings.SoundEffectsOn)
+                    selectSound.Play(GameSettings.SoundEffectsVolume, 0, 0);
                 if (hoveringCurrent == 0)
                 {
                     MediaPlayer.Stop();
