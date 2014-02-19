@@ -85,3 +85,7 @@ C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\Princess
 C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\Music\ElScorchoSong.wav
 C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\Music\07InTheGarage.xnb
 C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\Music\ElScorchoIntro.xnb
+C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\buttonEditor.xnb
+C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\buttonExit.xnb
+C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\buttonSettings.xnb
+C:\Users\Taylor\Documents\MyStuff\Projects\C#\Games\PrincessMonoSmasher\PrincessMonoSmasher\PrincessMonoSmasher\bin\WindowsGL\Debug\Content\buttonStart.xnb
