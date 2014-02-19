@@ -537,11 +537,11 @@ namespace PrincessMonoSmasher
 
         public static fRectangle operator +(fRectangle rec, Vector2 p)
         {
-            return new fRectangle(rec.Position + p, rec.Size);
+            return new fRectangle(rec.Position + p, rec.Size.X, rec.Size.Y);
         }
         public static fRectangle operator -(fRectangle rec, Vector2 p)
         {
-            return new fRectangle(rec.Position - p, rec.Size);
+            return new fRectangle(rec.Position - p, rec.Size.X, rec.Size.Y);
         }
     }
 }

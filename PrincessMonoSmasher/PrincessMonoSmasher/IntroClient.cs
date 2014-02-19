@@ -13,7 +13,7 @@ namespace PrincessMonoSmasher
     class IntroClient
     {
         private static int time;
-        static Texture2D logoTexture;
+        static Texture2D logoTexture, banner, btStart, btSettings, btEditor, btExit;
         static SpriteFont font;
         static Song introSong;
 
@@ -22,6 +22,12 @@ namespace PrincessMonoSmasher
             logoTexture = Gl.Load("pendeproLogo");
             font = Gl.Content.Load<SpriteFont>("Font1");
             introSong = Gl.Content.Load<Song>("Music/ElScorchoIntro.wav");
+            //Needed for drawing fake menu
+            banner = Gl.Load("banner");
+            btStart = Gl.Load("buttonStart");
+            btSettings = Gl.Load("buttonSettings");
+            btEditor = Gl.Load("buttonEditor");
+            btExit = Gl.Load("buttonExit");
         }
 
         public static void Initialize()
