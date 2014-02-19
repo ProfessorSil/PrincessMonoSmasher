@@ -45,8 +45,8 @@ namespace PrincessMonoSmasher
             GameClient.LoadContent();
             MenuClient.LoadContent();
             IntroClient.LoadContent();
-            
-            
+
+            GotoClient(Clients.Game);
         }
 
         public void GotoClient(Clients client, string roomName = "defualt")

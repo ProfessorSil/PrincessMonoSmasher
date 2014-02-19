@@ -292,7 +292,7 @@ namespace PrincessMonoSmasher
         {
             get
             {
-                return new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)) * size.X / 2f;
+                return new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)) * (size.X / 2f);
             }
         }
         /// <summary>
@@ -302,7 +302,7 @@ namespace PrincessMonoSmasher
         {
             get
             {
-                return new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)) * -size.X / 2f;
+                return new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)) * -(size.X / 2f);
             }
         }
         /// <summary>
@@ -312,7 +312,7 @@ namespace PrincessMonoSmasher
         {
             get
             {
-                return new Vector2((float)Math.Cos(rotation + MathHelper.PiOver2), (float)Math.Sin(rotation + MathHelper.PiOver2)) * size.Y / 2f;
+                return new Vector2((float)Math.Cos(rotation + MathHelper.PiOver2), (float)Math.Sin(rotation + MathHelper.PiOver2)) * (size.Y / 2f);
             }
         }
         /// <summary>
@@ -322,7 +322,7 @@ namespace PrincessMonoSmasher
         {
             get
             {
-                return new Vector2((float)Math.Cos(rotation + MathHelper.PiOver2), (float)Math.Sin(rotation + MathHelper.PiOver2)) * -size.Y / 2f;
+                return new Vector2((float)Math.Cos(rotation + MathHelper.PiOver2), (float)Math.Sin(rotation + MathHelper.PiOver2)) * -(size.Y / 2f);
             }
         }
         public Vector2 TopLeft
