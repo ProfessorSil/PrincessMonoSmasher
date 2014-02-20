@@ -66,7 +66,8 @@ namespace PrincessMonoSmasher
                 Gl.sB.DrawString(font, "Loading...", Vector2.Zero, Color.White);
             }
 
-            #region Logo
+            #region Intro Sequence
+            //Logo
             float alpha = 1;
             if (time >= 30 && time < 125)
                 alpha = (time - 30) / 95f;
@@ -74,6 +75,21 @@ namespace PrincessMonoSmasher
                 alpha = 0;
             Gl.sB.Draw(logoTexture, new Vector2(Gl.graphics.Viewport.Width / 2f, Gl.graphics.Viewport.Height / 2f), null, Color.White * alpha, 0f,
                 new Vector2(logoTexture.Width / 2f, logoTexture.Height / 2f), 1f, SpriteEffects.None, 0f);
+
+            //Banner
+            if (time > 230)
+            {
+                Gl.sB.Draw(banner, new Rectangle(0, 0, Gl.graphics.Viewport.Width, banner.Height * (Gl.graphics.Viewport.Width / banner.Width)), Color.White);
+            }
+            //Buttons
+            if (time > 280)
+            {
+                fRectangle reference = new fRectangle(Gl.graphics.Viewport.Width / 2f, Gl.graphics.Viewport.Height / 3f * 2f, btStart.Width * 4, btStart.Height * 2);
+                Gl.sB.Draw(btStart, (reference + new Vector2(-100, -50)).Convert(), new Rectangle(0, 0, btStart.Width, btStart.Height / 2), Color.White);
+                Gl.sB.Draw(btSettings, (reference + new Vector2(100, -50)).Convert(), new Rectangle(0, 0, btSettings.Width, btSettings.Height / 2), Color.White);
+                Gl.sB.Draw(btEditor, (reference + new Vector2(-100, 50)).Convert(), new Rectangle(0, 0, btEditor.Width, btEditor.Height / 2), Color.White);
+                Gl.sB.Draw(btExit, (reference + new Vector2(100, 50)).Convert(), new Rectangle(0, 0, btExit.Width, btExit.Height / 2), Color.White);
+            }
             #endregion
 
             Gl.sB.End();

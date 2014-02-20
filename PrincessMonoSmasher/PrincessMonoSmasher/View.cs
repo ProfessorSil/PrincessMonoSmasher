@@ -210,7 +210,7 @@ namespace PrincessMonoSmasher
         {
             get
             {
-                return Matrix.CreateTranslation(new Vector3(-position.X, -position.Y, 0)) * Matrix.CreateRotationZ(-rotation) * Matrix.CreateScale(zoom) * Matrix.CreateTranslation(ScreenSize.X / 2f, ScreenSize.Y / 2f, 0f);
+                return Matrix.CreateTranslation(new Vector3(-(float)Math.Round(position.X, 2), -(float)Math.Round(position.Y, 2), 0)) * Matrix.CreateRotationZ(-rotation) * Matrix.CreateScale(zoom) * Matrix.CreateTranslation(ScreenSize.X / 2f, ScreenSize.Y / 2f, 0f);
             }
         }
 

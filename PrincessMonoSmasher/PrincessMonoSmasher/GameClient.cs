@@ -14,7 +14,7 @@ namespace PrincessMonoSmasher
     class GameClient
     {
         public const float GRID_SIZE = 16;
-        public static Texture2D tileSheet;
+        public static Texture2D tileSheet, wallSheet, groundSheet;
         public static Song gameSong;
         public static SoundEffect sndDrown, sndBlockWater, sndBurn, sndBlockBurn, sndPusher, sndFall, sndPickup;
 
@@ -24,6 +24,7 @@ namespace PrincessMonoSmasher
         public static Tile[,] grid;
         private static int width, height;
         public static List<Entity> entities;
+        public static List<Point> deadPlayers;
 
         public static Player player
         {
@@ -47,6 +48,8 @@ namespace PrincessMonoSmasher
             Player.SpriteSheet = Gl.Load("playerSheet");
             Entity.sheet = Gl.Load("entitiesSheet");
             tileSheet = Gl.Load("tileSheet");
+            wallSheet = Gl.Load("wall");
+            groundSheet = Gl.Load("ground");
             gameSong = Gl.Content.Load<Song>("Music/WeAreAllOnDrugs.wav");
             sndBlockBurn = Gl.Content.Load<SoundEffect>("SoundEffects/blockBurn");
             sndBurn = Gl.Content.Load<SoundEffect>("SoundEffects/burn");
@@ -57,19 +60,31 @@ namespace PrincessMonoSmasher
             sndFall = Gl.Content.Load<SoundEffect>("SoundEffects/fall");
         }
 
+        //####INITIATE########INITIATE########INITIATE########INITIATE########INITIATE########INITIATE########INITIATE########INITIATE########INITIATE########INITIATE####
         public static void Initialize(string roomName)
         {
-            view = new View(Vector2.Zero, 2f, 0f, 10f);
-            if (MediaPlayer.State == MediaState.Playing)
-                MediaPlayer.Stop();
-            if (GameSettings.MusicOn)
+            if (MediaPlayer.Queue.ActiveSong.Name != gameSong.Name)
             {
-                MediaPlayer.IsRepeating = true;
-                MediaPlayer.Volume = GameSettings.MusicVolume;
-                MediaPlayer.Play(gameSong);
+                if (MediaPlayer.State == MediaState.Playing)
+                    MediaPlayer.Stop();
+                if (GameSettings.MusicOn)
+                {
+                    MediaPlayer.IsRepeating = true;
+                    MediaPlayer.Volume = GameSettings.MusicVolume;
+                    MediaPlayer.Play(gameSong);
+                }
             }
 
-            LoadRoom(roomName);
+            deadPlayers = new List<Point>();
+            currentRoomName = roomName;
+            RestartRoom();
+        }
+        //####INITIATE########INITIATE########INITIATE########INITIATE########INITIATE########INITIATE########INITIATE########INITIATE########INITIATE########INITIATE####
+
+        public static void RestartRoom()
+        {
+            view = new View(Vector2.Zero, 2f, 0f, 10f);
+            LoadRoom(currentRoomName);
         }
 
         public static void LoadRoom(string room)
@@ -80,6 +95,12 @@ namespace PrincessMonoSmasher
             grid = new Tile[file.Width, file.Height];
             width = file.Width;
             height = file.Height;
+
+            view.LeftMax = 0;
+            view.TopMax = 0;
+            view.BottomMax = height * GRID_SIZE;
+            view.RightMax = width * GRID_SIZE;
+
             for (int x = 0; x < file.Width; x++)
             {
                 for (int y = 0; y < file.Height; y++)
@@ -112,21 +133,27 @@ namespace PrincessMonoSmasher
                         string boxType = file.entities[i][2].ToLower();
                         if (boxType == "n" || boxType == "normal" || boxType == "0")
                         {
-                            entities.Add(new BoxEntity(pos));
+                            entities.Add(new BoxEntity(pos, false));
                         }
                         else if (boxType == "l" || boxType == "light" || boxType == "1")
                         {
-                            //CREATE LIGHT BOX
+                            entities.Add(new BoxEntity(pos, true));
                         }
                         else
                         {
-                            entities.Add(new BoxEntity(pos));
+                            entities.Add(new BoxEntity(pos, false));
                         }
                     }
                     else
                     {
-                        entities.Add(new BoxEntity(pos));
+                        entities.Add(new BoxEntity(pos, false));
                     }
+                    #endregion
+                }
+                else if (type == "g" || type == "gem")
+                {
+                    #region Gem
+                    //ADD GEM
                     #endregion
                 }
                 else if (type == "t" || type == "teleporter")
@@ -375,6 +402,7 @@ namespace PrincessMonoSmasher
             return null;
         }
 
+        //#####UPDATE##########UPDATE##########UPDATE##########UPDATE##########UPDATE##########UPDATE##########UPDATE##########UPDATE##########UPDATE##########UPDATE#####
         public static void Update()
         {
             #region Test View Movement
@@ -400,6 +428,7 @@ namespace PrincessMonoSmasher
             }
             #endregion
 
+            #region Entity Updating
             for (int i = 0; i < entities.Count; i++)
             {
                 entities[i].Update();
@@ -407,7 +436,7 @@ namespace PrincessMonoSmasher
                 {
                     if (i == 0)//If this is the player that's done dying
                     {
-                        RestartLevel();
+                        RestartRoom();
                     }
                     else
                     {
@@ -416,7 +445,12 @@ namespace PrincessMonoSmasher
                     }
                 }
             }
+            #endregion
+
             view.positionGoto = player.DrawPosition + new Vector2(GRID_SIZE / 2f);
+            pusherAnimationFrame += 1;
+            if (pusherAnimationFrame >= 12)
+                pusherAnimationFrame = 0;
 
             if (Gl.KeyPress(Keys.R) && !player.IsDead)
             {
@@ -425,12 +459,9 @@ namespace PrincessMonoSmasher
 
             view.Update();
         }
+        //#####UPDATE##########UPDATE##########UPDATE##########UPDATE##########UPDATE##########UPDATE##########UPDATE##########UPDATE##########UPDATE##########UPDATE#####
 
-        public static void RestartLevel()
-        {
-            Initialize(currentRoomName);
-        }
-
+        //######DRAW############DRAW############DRAW############DRAW############DRAW############DRAW############DRAW############DRAW############DRAW############DRAW######
         public static void Draw()
         {
             //                       This makes the pixelated graphics stay pixelated---V
@@ -440,9 +471,12 @@ namespace PrincessMonoSmasher
             {
                 for (int y = 0; y < Height; y++)
                 {
-                    Gl.sB.Draw(tileSheet, new Vector2(x * GRID_SIZE, y * GRID_SIZE), 
-                        new Rectangle(grid[x,y].type.X * 16, grid[x,y].type.Y * 16, 16, 16), Color.White);
+                    DrawGridSpace(x, y);
                 }
+            }
+            foreach (Point p in GameClient.deadPlayers)
+            {
+                Gl.sB.Draw(Player.SpriteSheet, new Vector2(p.X, p.Y) * GameClient.GRID_SIZE, new Rectangle(3 * 16, 8 * 16, 16, 16), Color.White);
             }
             for (int i = entities.Count - 1; i >= 0; i--)
             {
@@ -450,6 +484,175 @@ namespace PrincessMonoSmasher
             }
 
             Gl.sB.End();
+        }
+        //######DRAW############DRAW############DRAW############DRAW############DRAW############DRAW############DRAW############DRAW############DRAW############DRAW######
+
+        static int pusherAnimationFrame = 0;
+        private static void DrawGridSpace(int x, int y)
+        {
+            Point type = grid[x, y].type;
+            if (type == new Point(1, 0))// || type == new Point(0,0)) //<--Uncomment if you want ground to tile together
+            {
+                #region Wall
+                bool left = (x > 0) ? grid[x - 1, y].type == type : true;
+                bool right = (x < Width - 1) ? grid[x + 1, y].type == type : true;
+                bool up = (y > 0) ? grid[x, y - 1].type == type : true;
+                bool down = (y < Height - 1) ? grid[x, y + 1].type == type : true;
+                bool upLeft = (y > 0 && x > 0) ? grid[x - 1, y - 1].type == type : true;
+                bool upRight = (y > 0 && x < Width - 1) ? grid[x + 1, y - 1].type == type : true;
+                bool downLeft = (y < Height - 1 && x > 0) ? grid[x - 1, y + 1].type == type : true;
+                bool downRight = (y < Height - 1 && x < Width - 1) ? grid[x + 1, y + 1].type == type : true;
+                Point drawCell = new Point(0, 0);
+                #region All and None
+                if (left && right && up && down)
+                {
+                    drawCell = new Point(0, 1);
+                }
+                else if (!left && !right && !up && !down)
+                {
+                    drawCell = new Point(0, 0);
+                }
+                #endregion
+                #region Corners
+                else if (!left && right && !up && down)
+                {
+                    drawCell = new Point(1, 0);
+                }
+                else if (left && !right && !up && down)
+                {
+                    drawCell = new Point(2, 0);
+                }
+                else if (!left && right && up && !down)
+                {
+                    drawCell = new Point(1, 1);
+                }
+                else if (left && !right && up && !down)
+                {
+                    drawCell = new Point(2, 1);
+                }
+                #endregion
+                #region Tips
+                else if (!left && right && !up && !down)
+                {
+                    drawCell = new Point(0, 2);
+                }
+                else if (!left && !right && !up && down)
+                {
+                    drawCell = new Point(1, 2);
+                }
+                else if (left && !right && !up && !down)
+                {
+                    drawCell = new Point(2, 2);
+                }
+                else if (!left && !right && up && !down)
+                {
+                    drawCell = new Point(3, 2);
+                }
+                #endregion
+                #region Sides
+                else if (left && !right && up && down)
+                {
+                    drawCell = new Point(0, 3);
+                }
+                else if (left && right && up && !down)
+                {
+                    drawCell = new Point(1, 3);
+                }
+                else if (!left && right && up && down)
+                {
+                    drawCell = new Point(2, 3);
+                }
+                else if (left && right && !up && down)
+                {
+                    drawCell = new Point(3, 3);
+                }
+                #endregion
+                #region 2 Sides
+                else if (!left && !right && up && down)
+                {
+                    drawCell = new Point(3, 0);
+                }
+                else if (left && right && !up && !down)
+                {
+                    drawCell = new Point(3, 1);
+                }
+                #endregion
+
+                Gl.sB.Draw((type == new Point(1,0)) ? wallSheet : groundSheet, new Vector2(x * GRID_SIZE, y * GRID_SIZE),
+                        new Rectangle(drawCell.X * 16, drawCell.Y * 16, 16, 16), Color.White);
+
+                #region Inner Corners
+                drawCell = new Point(-1, -1);
+                if (up && left && !upLeft)
+                {
+                    drawCell = new Point(1, 4);
+                    Gl.sB.Draw((type == new Point(1, 0)) ? wallSheet : groundSheet, new Vector2(x * GRID_SIZE, y * GRID_SIZE),
+                            new Rectangle(drawCell.X * 16, drawCell.Y * 16, 16, 16), Color.White);
+                }
+                if (up && right && !upRight)
+                {
+                    drawCell = new Point(0, 4);
+                    Gl.sB.Draw((type == new Point(1, 0)) ? wallSheet : groundSheet, new Vector2(x * GRID_SIZE, y * GRID_SIZE),
+                            new Rectangle(drawCell.X * 16, drawCell.Y * 16, 16, 16), Color.White);
+                }
+                if (down && left && !downLeft)
+                {
+                    drawCell = new Point(2, 4);
+                    Gl.sB.Draw((type == new Point(1, 0)) ? wallSheet : groundSheet, new Vector2(x * GRID_SIZE, y * GRID_SIZE),
+                            new Rectangle(drawCell.X * 16, drawCell.Y * 16, 16, 16), Color.White);
+                }
+                if (down && right && !downRight)
+                {
+                    drawCell = new Point(3, 4);
+                    Gl.sB.Draw((type == new Point(1, 0)) ? wallSheet : groundSheet, new Vector2(x * GRID_SIZE, y * GRID_SIZE),
+                            new Rectangle(drawCell.X * 16, drawCell.Y * 16, 16, 16), Color.White);
+                }
+                #endregion
+                #endregion
+            }
+            else if (type == new Point(2, 0) || type == new Point(4, 0) || type == new Point(5, 0))
+            {
+                #region Hole, lava, and water
+                Gl.sB.Draw(tileSheet, new Vector2(x * GRID_SIZE, y * GRID_SIZE),
+                        new Rectangle(grid[x, y].type.X * 16, grid[x, y].type.Y * 16, 16, 16), Color.White);
+                bool left = (x > 0) ? grid[x - 1, y].type == type : true;
+                bool up = (y > 0) ? grid[x, y - 1].type == type : true;
+                bool upLeft = (y > 0 && x > 0) ? grid[x - 1, y - 1].type == type : true;
+                if (!up && !left)
+                {
+                    Gl.sB.Draw(tileSheet, new Vector2(x * GRID_SIZE, y * GRID_SIZE),
+                            new Rectangle(3 * 16, 8 * 16, 16, 16), Color.White);
+                }
+                else if (!up && left)
+                {
+                    Gl.sB.Draw(tileSheet, new Vector2(x * GRID_SIZE, y * GRID_SIZE),
+                            new Rectangle(4 * 16, 8 * 16, 16, 16), Color.White);
+                }
+                else if (up && !left)
+                {
+                    Gl.sB.Draw(tileSheet, new Vector2(x * GRID_SIZE, y * GRID_SIZE),
+                            new Rectangle(3 * 16, 9 * 16, 16, 16), Color.White);
+                }
+                else if (!upLeft && up && left)
+                {
+                    Gl.sB.Draw(tileSheet, new Vector2(x * GRID_SIZE, y * GRID_SIZE),
+                            new Rectangle(4 * 16, 9 * 16, 16, 16), Color.White);
+                }
+                #endregion
+            }
+            else if (type.Y == 1 && type.X < 4)
+            {
+                #region Pushers
+                Point drawCell = new Point(6 + (pusherAnimationFrame / 3), 6 + type.X);
+                Gl.sB.Draw(tileSheet, new Vector2(x * GRID_SIZE, y * GRID_SIZE),
+                        new Rectangle(drawCell.X * 16, drawCell.Y * 16, 16, 16), Color.White);
+                #endregion
+            }
+            else
+            {
+                Gl.sB.Draw(tileSheet, new Vector2(x * GRID_SIZE, y * GRID_SIZE),
+                        new Rectangle(grid[x, y].type.X * 16, grid[x, y].type.Y * 16, 16, 16), Color.White);
+            }
         }
 
         public static void PlaySoundEffect(SoundEffect snd)

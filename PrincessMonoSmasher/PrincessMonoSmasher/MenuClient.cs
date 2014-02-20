@@ -59,6 +59,7 @@ namespace PrincessMonoSmasher
                     hoveringCurrent = i;
                 }
             }
+            #region Keyboard Control
             if (Gl.KeyPress(Keys.Right))
             {
                 hoveringCurrent++;
@@ -91,6 +92,7 @@ namespace PrincessMonoSmasher
                 if (GameSettings.SoundEffectsOn)
                     moveSound.Play(GameSettings.SoundEffectsVolume, 0, 0);
             }
+            #endregion
 
             if (Gl.MousePress(true) || Gl.KeyPress(Keys.Enter))
             {
@@ -100,6 +102,7 @@ namespace PrincessMonoSmasher
                 {
                     MediaPlayer.Stop();
                     Gl.game.GotoClient(Clients.Game, "Level1");
+                    //TODO: Add smoother transition to game as well as some way to choose levels
                 }
                 else if (hoveringCurrent == 1)
                 {

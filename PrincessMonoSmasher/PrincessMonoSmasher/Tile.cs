@@ -23,6 +23,8 @@ namespace PrincessMonoSmasher
         {
             if (type == new Point(1, 0))
                 this.isSolid = true;
+            else if (type.Y == 1 && type.X >= 4 && type.X <= 7)
+                this.isSolid = true;
             else
                 this.isSolid = false;
 

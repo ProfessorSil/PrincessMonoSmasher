@@ -14,18 +14,21 @@ namespace PrincessMonoSmasher
         private bool isDying;
         private DeathType typeOfDeath;
         private int deathTimer;
+        public bool isLightBox;
 
         public bool IsDead
         {
             get { return isDying; }
         }
 
-        public BoxEntity(Point position)
+        public BoxEntity(Point position, bool isLightBox)
             : base(new Point(0, 0), position, false, true)
         {
             this.isDying = false;
             this.typeOfDeath = DeathType.Generic;
-
+            this.isLightBox = isLightBox;
+            if (isLightBox)
+                texture = new Point(1, 0);
         }
 
         public override void Update()

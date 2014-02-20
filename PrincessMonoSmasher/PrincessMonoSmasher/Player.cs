@@ -104,6 +104,7 @@ namespace PrincessMonoSmasher
                     if (deathTimer > 96)
                     {
                         alive = false;
+                        GameClient.deadPlayers.Add(Position);
                     }
                 }
                 #endregion
