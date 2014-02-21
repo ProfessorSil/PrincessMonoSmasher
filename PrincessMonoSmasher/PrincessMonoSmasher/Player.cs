@@ -72,6 +72,28 @@ namespace PrincessMonoSmasher
                         facingDirection = 0;
                     }
                     #endregion
+                    #region Buttons
+                    if (Gl.KeyDown(Keys.Enter) || Gl.KeyDown(Keys.Z) || Gl.KeyDown(Keys.Space))
+                    {
+                        Point lookAtPos = Position;
+                        if (facingDirection == 0)
+                            lookAtPos.Y++;
+                        if (facingDirection == 1)
+                            lookAtPos.Y--;
+                        if (facingDirection == 2)
+                            lookAtPos.X--;
+                        if (facingDirection == 3)
+                            lookAtPos.X++;
+                        Entity e = GameClient.GetSolidEntityAt(lookAtPos.X, lookAtPos.Y);
+                        if (e is ButtonEntity)
+                        {
+                            //We just have to set it to true while we are
+                            //pressing it down and the ButtonEntity class
+                            //will do the rest
+                            ((ButtonEntity)e).isBeingPressed = true;
+                        }
+                    }
+                    #endregion
                 }
             }
             else
@@ -104,7 +126,6 @@ namespace PrincessMonoSmasher
                     if (deathTimer > 96)
                     {
                         alive = false;
-                        GameClient.deadPlayers.Add(Position);
                     }
                 }
                 #endregion
@@ -114,6 +135,29 @@ namespace PrincessMonoSmasher
         public override void CheckRestingPos()
         {
             base.CheckRestingPos();
+
+            Entity e = GameClient.GetEntityAt(Position.X, Position.Y);
+            if (e != null)
+            {
+                if (e is TeleporterEntity)
+                {
+                    Point telePos = ((TeleporterEntity)e).CanTeleport();
+                    if (telePos != new Point(-1, -1))
+                    {
+                        PositionLast = new Point(telePos.X - (Position.X - PositionLast.X), telePos.Y - (Position.Y - PositionLast.Y));
+                        Position = telePos;
+                        GameClient.PlaySoundEffect(GameClient.sndTeleport);
+                    }
+                    else
+                    {
+                        //GameClient.PlaySoundEffect(GameClient.sndCantTeleport);
+                    }
+                }
+                else if (e is ExitEntity)
+                {
+                    //TODO: ADD LEVEL EXITING
+                }
+            }
 
             Tile t = GameClient.grid[Position.X, Position.Y];
             if (t.type == new Point(0, 1)) //Pusher Right
@@ -173,7 +217,7 @@ namespace PrincessMonoSmasher
             //base.Draw(); <--We don't want it to draw our sprite automatically
             if (GameSettings.DebugDrawOn)
             {
-                Gl.DrawRectangle(new fRectangle(DrawPosition.X, DrawPosition.Y, GameClient.GRID_SIZE, GameClient.GRID_SIZE), Color.Green * 0.8f, Color.Black, 1f);
+                Gl.DrawRectangle(new fRectangle(DrawPosition.X, DrawPosition.Y, GameClient.GRID_SIZE, GameClient.GRID_SIZE), Color.Green * 0.8f, Color.Black, 0.5f);
             }
 
             Point cell = new Point(0, 0);

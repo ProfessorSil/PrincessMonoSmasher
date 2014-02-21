@@ -94,14 +94,9 @@ namespace PrincessMonoSmasher
         {
             if (!isStatic && !GameClient.grid[position.X + dX, position.Y + dY].IsSolid)
             {
-                Entity e = GameClient.GetEntityAt(position.X + dX, position.Y + dY);
+                Entity e = GameClient.GetSolidEntityAt(position.X + dX, position.Y + dY);
 
                 if (e == null)
-                {
-                    Move(dX, dY);
-                    return true;
-                }
-                else if (!e.isSolid)
                 {
                     Move(dX, dY);
                     return true;
@@ -146,7 +141,7 @@ namespace PrincessMonoSmasher
         {
             if (GameSettings.DebugDrawOn)
             {
-                Gl.DrawRectangle(new fRectangle(DrawPosition.X, DrawPosition.Y, GameClient.GRID_SIZE, GameClient.GRID_SIZE), Color.Green * 0.8f, Color.Black, 1f);
+                Gl.DrawRectangle(new fRectangle(DrawPosition.X, DrawPosition.Y, GameClient.GRID_SIZE, GameClient.GRID_SIZE), Color.Green * 0.8f, Color.Black, 0.5f);
             }
 
             Gl.sB.Draw(sheet, DrawPosition, new Rectangle(texture.X * 16, texture.Y * 16, 16, 16), Color.White);

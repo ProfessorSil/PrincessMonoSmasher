@@ -90,7 +90,7 @@ namespace PrincessMonoSmasher
                     list.Add(line.Substring(lastSeperator, i - lastSeperator));
                     lastSeperator = i + 1;
                 }
-                else if (i == line.Length - 1 && i != lastSeperator)
+                else if (i == line.Length - 1)
                 {
                     list.Add(line.Substring(lastSeperator, (i + 1) - lastSeperator));
                     lastSeperator = i + 1;

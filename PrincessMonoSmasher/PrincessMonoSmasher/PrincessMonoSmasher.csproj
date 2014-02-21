@@ -35,10 +35,15 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AstheticEntity.cs" />
     <Compile Include="BoxEntity.cs" />
+    <Compile Include="ButtonEntity.cs" />
+    <Compile Include="DoorEntity.cs" />
     <Compile Include="Entity.cs" />
+    <Compile Include="ExitEntity.cs" />
     <Compile Include="FileHandling.cs" />
     <Compile Include="GameSettings.cs" />
+    <Compile Include="GemEntity.cs" />
     <Compile Include="IntroClient.cs" />
     <Compile Include="LevelFile.cs" />
     <Compile Include="MenuClient.cs" />
@@ -46,8 +51,11 @@
     <Compile Include="GameClient.cs" />
     <Compile Include="Gl.cs" />
     <Compile Include="Player.cs" />
+    <Compile Include="PressurePadEntity.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SwitchEntity.cs" />
+    <Compile Include="TeleporterEntity.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="View.cs" />
   </ItemGroup>

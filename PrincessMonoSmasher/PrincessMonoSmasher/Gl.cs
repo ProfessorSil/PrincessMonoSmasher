@@ -20,6 +20,7 @@ namespace PrincessMonoSmasher
         public static GameTime gameTime;
         public static Random rand;
         public static Texture2D dot;
+        public static SpriteFont font;
 
         public static Vector2 MousePos
         {
@@ -40,6 +41,7 @@ namespace PrincessMonoSmasher
             rand = new Random();
             dot = new Texture2D(device, 1, 1);
             dot.SetData<Color>(new Color[1] { Color.White });
+            font = Content.Load<SpriteFont>("Font1");
         }
 
         public static void Update(GameTime gt)

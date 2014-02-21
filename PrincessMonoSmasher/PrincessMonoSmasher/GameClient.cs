@@ -16,7 +16,9 @@ namespace PrincessMonoSmasher
         public const float GRID_SIZE = 16;
         public static Texture2D tileSheet, wallSheet, groundSheet;
         public static Song gameSong;
-        public static SoundEffect sndDrown, sndBlockWater, sndBurn, sndBlockBurn, sndPusher, sndFall, sndPickup;
+        public static SoundEffect sndDrown, sndBlockWater, sndBurn,
+            sndBlockBurn, sndPusher, sndFall, sndPickup, sndTeleport,
+            sndButton;
 
         public static View view;
         public static string currentRoomName;
@@ -25,6 +27,10 @@ namespace PrincessMonoSmasher
         private static int width, height;
         public static List<Entity> entities;
         public static List<Point> deadPlayers;
+        /// <summary>
+        /// Currently not used in any way
+        /// </summary>
+        public static int score;
 
         public static Player player
         {
@@ -58,6 +64,8 @@ namespace PrincessMonoSmasher
             sndBlockWater = Gl.Content.Load<SoundEffect>("SoundEffects/blockWater");
             sndDrown = Gl.Content.Load<SoundEffect>("SoundEffects/splash");
             sndFall = Gl.Content.Load<SoundEffect>("SoundEffects/fall");
+            sndTeleport = Gl.Content.Load<SoundEffect>("SoundEffects/teleporting");
+            sndButton = Gl.Content.Load<SoundEffect>("SoundEffects/menuSelect");//<--TODO: Need to create sound effect for this!!
         }
 
         //####INITIATE########INITIATE########INITIATE########INITIATE########INITIATE########INITIATE########INITIATE########INITIATE########INITIATE########INITIATE####
@@ -84,7 +92,16 @@ namespace PrincessMonoSmasher
         public static void RestartRoom()
         {
             view = new View(Vector2.Zero, 2f, 0f, 10f);
+            score = 0;
             LoadRoom(currentRoomName);
+        }
+        public static void EndRoom()
+        {
+            //TODO: Add end of room dialog and option to continue
+        }
+        public static void GotoNextRoom()
+        {
+            //TODO: Add more levels to load after this one
         }
 
         public static void LoadRoom(string room)
@@ -109,6 +126,7 @@ namespace PrincessMonoSmasher
                 }
             }
             entities = new List<Entity>();
+            entities.Add(new Player(new Point(2, 2)));
             for (int i = 0; i < file.entities.Count; i++)
             {
                 #region Entities
@@ -123,6 +141,7 @@ namespace PrincessMonoSmasher
                 //key: Key
                 //door: Door
                 //pad: Pressure Pad (For light up box)
+                //asthetic: Asthetic
                 string type = file.entities[i][0].ToLower();
                 Point pos = FileHandling.ParsePoint(file.entities[i][1]);
                 if (type == "b" || type == "box")
@@ -133,62 +152,62 @@ namespace PrincessMonoSmasher
                         string boxType = file.entities[i][2].ToLower();
                         if (boxType == "n" || boxType == "normal" || boxType == "0")
                         {
-                            entities.Add(new BoxEntity(pos, false));
+                            entities.Insert(1, new BoxEntity(pos, false));
                         }
                         else if (boxType == "l" || boxType == "light" || boxType == "1")
                         {
-                            entities.Add(new BoxEntity(pos, true));
+                            entities.Insert(1, new BoxEntity(pos, true));
                         }
                         else
                         {
-                            entities.Add(new BoxEntity(pos, false));
+                            entities.Insert(1, new BoxEntity(pos, false));
                         }
                     }
                     else
                     {
-                        entities.Add(new BoxEntity(pos, false));
+                        entities.Insert(1, new BoxEntity(pos, false));
                     }
                     #endregion
                 }
                 else if (type == "g" || type == "gem")
                 {
                     #region Gem
-                    //ADD GEM
+                    entities.Add(new GemEntity(pos));
                     #endregion
                 }
                 else if (type == "t" || type == "teleporter")
                 {
                     #region Teleporters
-                    if (file.entities[i].Length >= 2)
+                    if (file.entities[i].Length >= 3)
                     {
-                        string teleType = file.entities[i][3].ToLower();
+                        string teleType = file.entities[i][2].ToLower();
                         if (teleType == "red" || teleType == "0")
                         {
-                            //CREATE RED TELEPORT
+                            entities.Add(new TeleporterEntity(pos, 0));
                         }
                         else if (teleType == "green" || teleType == "1")
                         {
-                            //CREATE GREEN TELEPORT
+                            entities.Add(new TeleporterEntity(pos, 1));
                         }
                         else if (teleType == "blue" || teleType == "2")
                         {
-                            //CREATE BLUE TELEPORT
+                            entities.Add(new TeleporterEntity(pos, 2));
                         }
                         else
                         {
-                            //ADD DEFAULT TELEPORT
+                            entities.Add(new TeleporterEntity(pos, 0));
                         }
                     }
                     else
                     {
-                        //ADD DEFAULT TELEPORT
+                        entities.Add(new TeleporterEntity(pos, 0));
                     }
                     #endregion
                 }
                 else if (type == "e" || type == "exit")
                 {
                     #region Exit
-                    //ADD EXIT
+                    entities.Add(new ExitEntity(pos));
                     #endregion
                 }
                 else if (type == "u" || type == "button")
@@ -197,39 +216,45 @@ namespace PrincessMonoSmasher
                     if (file.entities[i].Length >= 3)
                     {
                         string buttonType = file.entities[i][2].ToLower();
-                        //gray, yellow, orange, blue, green, purple
+                        Point target = new Point(-1, -1);
+                        bool isOneTimeUse = false;
+                        if (file.entities[i].Length >= 4)
+                            bool.TryParse(file.entities[i][3], out isOneTimeUse);
+                        if (file.entities[i].Length >= 5)
+                            target = FileHandling.ParsePoint(file.entities[i][4]);
+                        //0=gray, 1=yellow, 2=orange, 3=blue, 4=green, 5=purple
                         if (buttonType == "gray" || buttonType == "0")
                         {
-                            //CREATE GRAY BUTTON
+                            entities.Add(new ButtonEntity(pos, 0, isOneTimeUse, target));
                         }
                         else if (buttonType == "yellow" || buttonType == "1")
                         {
-                            //CREATE YELLOW BUTTON
+                            entities.Add(new ButtonEntity(pos, 1, isOneTimeUse, target));
                         }
                         else if (buttonType == "orange" || buttonType == "2")
                         {
-                            //CREATE ORANGE BUTTON
+                            entities.Add(new ButtonEntity(pos, 2, isOneTimeUse, target));
                         }
                         else if (buttonType == "blue" || buttonType == "3")
                         {
-                            //CREATE BLUE BUTTON
+                            entities.Add(new ButtonEntity(pos, 3, isOneTimeUse, target));
                         }
                         else if (buttonType == "green" || buttonType == "4")
                         {
-                            //CREATE GREEN BUTTON
+                            entities.Add(new ButtonEntity(pos, 4, isOneTimeUse, target));
                         }
                         else if (buttonType == "purple" || buttonType == "5")
                         {
-                            //CREATE PURPLE BUTTON
+                            entities.Add(new ButtonEntity(pos, 5, isOneTimeUse, target));
                         }
                         else
                         {
-                            //ADD DEFAULT BUTTON
+                            entities.Add(new ButtonEntity(pos, 0, true));//<--Set them to onetimeuse to represent that they weren't loaded right
                         }
                     }
                     else
                     {
-                        //ADD DEFAULT BUTTON
+                        entities.Add(new ButtonEntity(pos, 0, true));//<--Set them to onetimeuse to represent that they weren't loaded right
                     }
                     #endregion
                 }
@@ -241,38 +266,44 @@ namespace PrincessMonoSmasher
                         string switchType = file.entities[i][2].ToLower();
                         //yellow, orange, blue, green, purple
                         //There is no 'gray' switch blocks only 'gray' buttons
-                        if (switchType == "yellow" || switchType == "0")
+                        List<string> settings = new List<string>();
+                        if (file.entities[i].Length >= 4)
                         {
-                            //CREATE YELLOW SWITCH
+                            for (int i2 = 3; i2 < file.entities[i].Length; i2++)
+                                settings.Add(file.entities[i][i2]);
                         }
-                        else if (switchType == "orange" || switchType == "1")
+                        if (switchType == "yellow" || switchType == "1")
                         {
-                            //CREATE ORANGE SWITCH
+                            entities.Add(new SwitchEntity(pos, 1, settings));
                         }
-                        else if (switchType == "blue" || switchType == "2")
+                        else if (switchType == "orange" || switchType == "2")
                         {
-                            //CREATE BLUE SWITCH
+                            entities.Add(new SwitchEntity(pos, 2, settings));
                         }
-                        else if (switchType == "green" || switchType == "3")
+                        else if (switchType == "blue" || switchType == "3")
                         {
-                            //CREATE GREEN SWITCH
+                            entities.Add(new SwitchEntity(pos, 3, settings));
                         }
-                        else if (switchType == "purple" || switchType == "4")
+                        else if (switchType == "green" || switchType == "4")
                         {
-                            //CREATE PURPLE SWITCH
+                            entities.Add(new SwitchEntity(pos, 4, settings));
+                        }
+                        else if (switchType == "purple" || switchType == "5")
+                        {
+                            entities.Add(new SwitchEntity(pos, 5, settings));
                         }
                         else
                         {
-                            //ADD DEFAULT SWITCH
+                            entities.Add(new SwitchEntity(pos, 1, settings));
                         }
                     }
                     else
                     {
-                        //ADD DEFAULT SWITCH
+                        entities.Add(new SwitchEntity(pos, 1, new List<string>()));
                     }
                     #endregion
                 }
-                else if (type == "k" || type == "key")
+                else if (type == "k" || type == "key") //TODO: Impliment keys
                 {
                     #region Keys
                     if (file.entities[i].Length >= 3)
@@ -313,44 +344,61 @@ namespace PrincessMonoSmasher
                         string doorType = file.entities[i][2].ToLower();
                         if (doorType == "gray" || doorType == "0")
                         {
-                            //CREATE GRAY DOOR
+                            entities.Add(new DoorEntity(pos, 0));
                         }
                         else if (doorType == "blue" || doorType == "1")
                         {
-                            //CREATE BLUE DOOR
+                            entities.Add(new DoorEntity(pos, 1));
                         }
                         else if (doorType == "green" || doorType == "2")
                         {
-                            //CREATE GREEN DOOR
+                            entities.Add(new DoorEntity(pos, 2));
                         }
                         else if (doorType == "brown" || doorType == "3")
                         {
-                            //CREATE BROWN DOOR
+                            entities.Add(new DoorEntity(pos, 3));
                         }
                         else if (doorType == "pressure" || doorType == "4")
                         {
-                            //CREATE PRESSURE DOOR
+                            entities.Add(new DoorEntity(pos, 4));
                         }
                         else
                         {
-                            //ADD DEFAULT DOOR
+                            entities.Add(new DoorEntity(pos, 0));
                         }
                     }
                     else
                     {
-                        //ADD DEFAULT DOOR
+                        entities.Add(new DoorEntity(pos, 0));
                     }
                     #endregion
                 }
                 else if (type == "p" || type == "pad")
                 {
-                    #region Exit
-                    //ADD PRESSURE PAD
+                    #region Pressure Pad
+                    entities.Add(new PressurePadEntity(pos));
                     #endregion
                 }
                 else if (type == "i" || type == "start")
                 {
+                    entities.RemoveAt(0);
                     entities.Insert(0, new Player(pos));
+                }
+                else if (type == "a" || type == "asthetic" || type == "decal")
+                {
+                    #region Asthetic
+                    if (file.entities[i].Length >= 3)
+                    {
+                        float alpha = 1;
+                        if (file.entities[i].Length >= 4)
+                            float.TryParse(file.entities[i][3], out alpha);
+                        entities.Add(new AstheticEntity(pos, FileHandling.ParsePoint(file.entities[i][2]), alpha));
+                    }
+                    else
+                    {
+                        entities.Add(new AstheticEntity(pos, new Point(9,9)));
+                    }
+                    #endregion
                 }
                 else
                 {
@@ -393,9 +441,21 @@ namespace PrincessMonoSmasher
         /// </summary>
         public static Entity GetEntityAt(int x, int y)
         {
-            for (int i = 0; i < entities.Count; i++)
+            //Runs backwards so that it will find everything else before 
+            //it finds the player
+            for (int i = entities.Count - 1; i >= 0; i--)
             {
                 if (entities[i].Position == new Point(x, y))
+                    return entities[i];
+            }
+
+            return null;
+        }
+        public static Entity GetSolidEntityAt(int x, int y)
+        {
+            for (int i = entities.Count - 1; i >= 0; i--)
+            {
+                if (entities[i].Position == new Point(x, y) && entities[i].isSolid)
                     return entities[i];
             }
 
@@ -436,6 +496,8 @@ namespace PrincessMonoSmasher
                 {
                     if (i == 0)//If this is the player that's done dying
                     {
+                        if (!deadPlayers.Contains(player.Position))
+                            deadPlayers.Add(player.Position);
                         RestartRoom();
                     }
                     else
@@ -476,7 +538,7 @@ namespace PrincessMonoSmasher
             }
             foreach (Point p in GameClient.deadPlayers)
             {
-                Gl.sB.Draw(Player.SpriteSheet, new Vector2(p.X, p.Y) * GameClient.GRID_SIZE, new Rectangle(3 * 16, 8 * 16, 16, 16), Color.White);
+                Gl.sB.Draw(tileSheet, new Vector2(p.X, p.Y) * GameClient.GRID_SIZE, new Rectangle(8 * 16, 0 * 16, 16, 16), Color.White * 0.25f);
             }
             for (int i = entities.Count - 1; i >= 0; i--)
             {
@@ -484,6 +546,17 @@ namespace PrincessMonoSmasher
             }
 
             Gl.sB.End();
+
+            
+
+            if (GameSettings.DebugDrawOn)
+            {
+                Gl.sB.Begin();
+
+                Gl.sB.DrawString(Gl.font, player.Position.ToString(), Vector2.Zero, Color.White);
+
+                Gl.sB.End();
+            }
         }
         //######DRAW############DRAW############DRAW############DRAW############DRAW############DRAW############DRAW############DRAW############DRAW############DRAW######
 
